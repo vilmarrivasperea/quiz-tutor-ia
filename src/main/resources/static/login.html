@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Quiz Tutor IA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f0f4ff; min-height: 100vh; display: flex; flex-direction: column; }
+        .header { background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+        .header h1 { color: white; font-size: 18px; font-weight: 700; }
+        .header p { color: rgba(255,255,255,0.8); font-size: 12px; }
+        .center { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .card { background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(79,70,229,0.1); border: 1px solid #e0e7ff; }
+        .icon { width: 64px; height: 64px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        h2 { text-align: center; font-size: 22px; font-weight: 800; color: #1e1b4b; margin-bottom: 6px; }
+        .subtitle { text-align: center; font-size: 14px; color: #6b7280; margin-bottom: 28px; }
+        .field { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #4f46e5; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+        input { width: 100%; padding: 12px 16px; border: 2px solid #e0e7ff; border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; color: #1e1b4b; background: #f8faff; transition: border 0.2s; }
+        input:focus { outline: none; border-color: #4f46e5; background: white; }
+        .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,70,229,0.35); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .link { text-align: center; margin-top: 20px; font-size: 14px; color: #6b7280; }
+        .link a { color: #4f46e5; font-weight: 600; text-decoration: none; }
+        .error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; display: none; }
+        .loader { display: inline-flex; gap: 4px; }
+        .loader span { width: 5px; height: 5px; border-radius: 50%; background: white; animation: pulse 1.2s infinite; }
+        .loader span:nth-child(2) { animation-delay: .2s; }
+        .loader span:nth-child(3) { animation-delay: .4s; }
+        @keyframes pulse { 0%,80%,100%{opacity:.3} 40%{opacity:1} }
+        .username-hint { background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; display: none; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div>
+        <h1>Quiz Tutor IA</h1>
+        <p>Aprende con inteligencia artificial</p>
+    </div>
+</div>
+<div class="center">
+    <div class="card">
+        <div class="icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M16 4C9.373 4 4 9.373 4 16s5.373 12 12 12 12-5.373 12-12S22.627 4 16 4z" fill="rgba(255,255,255,0.2)"/>
+                <path d="M12 16l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <h2>Bienvenido</h2>
+        <p class="subtitle">Inicia sesión para continuar aprendiendo</p>
+        <div class="error" id="error-msg"></div>
+        <div class="username-hint" id="username-hint"></div>
+        <div class="field">
+            <label>Usuario</label>
+            <input type="text" id="username" placeholder="Ej: juan.perez">
+        </div>
+        <div class="field">
+            <label>Contraseña</label>
+            <input type="password" id="password" placeholder="Tu contraseña">
+        </div>
+        <button class="btn" id="btn-login" onclick="login()">Iniciar sesión</button>
+        <div class="link">¿No tienes cuenta? <a href="/register.html">Regístrate aquí</a></div>
+    </div>
+</div>
+<script>
+    if (localStorage.getItem('token')) {
+        window.location.href = '/index.html';
+    }
+
+    async function login() {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const errorEl = document.getElementById('error-msg');
+        const btn = document.getElementById('btn-login');
+        errorEl.style.display = 'none';
+        if (!username || !password) {
+            errorEl.textContent = 'Por favor completa todos los campos.';
+            errorEl.style.display = 'block';
+            return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = 'Iniciando sesión <span class="loader"><span></span><span></span><span></span></span>';
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('username', data.username);
+                window.location.href = '/index.html';
+            } else {
+                errorEl.textContent = data;
+                errorEl.style.display = 'block';
+            }
+        } catch(e) {
+            errorEl.textContent = 'Error de conexión. Intenta de nuevo.';
+            errorEl.style.display = 'block';
+        }
+        btn.disabled = false;
+        btn.textContent = 'Iniciar sesión';
+    }
+    document.addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
+</script>
+</body>
+</html>
+```
+
+Guarda con `Ctrl + S` y abre el navegador en:
+```
+http://localhost:8080/login.html
