@@ -17,7 +17,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> 
+            .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -25,10 +25,13 @@ public class SecurityConfig {
                     "/index.html",
                     "/login.html",
                     "/register.html",
+                    "/dashboard.html",
                     "/css/**",
                     "/js/**",
                     "/*.html",
-                    "/api/auth/**"
+                    "/api/auth/**",
+                    "/api/quiz/**",
+                    "/api/dashboard/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             );

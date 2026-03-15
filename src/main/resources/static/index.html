@@ -72,6 +72,8 @@
         .logout-btn { padding: 8px 16px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
         .logout-btn:hover { background: rgba(255,255,255,0.3); }
         .username-tag { color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 500; }
+        .dashboard-btn { padding: 8px 16px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; text-decoration: none; }
+        .dashboard-btn:hover { background: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
@@ -89,6 +91,7 @@
             <p>Aprende con inteligencia artificial a tu ritmo</p>
         </div>
         <span class="username-tag" id="username-display"></span>
+        <a href="/dashboard.html" class="dashboard-btn">Mi progreso</a>
         <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
     </div>
 </div>
@@ -177,8 +180,9 @@
             <div class="stat"><div class="stat-num" id="r-total">0</div><div class="stat-lbl">Preguntas</div></div>
             <div class="stat"><div class="stat-num" id="r-pct">0%</div><div class="stat-lbl">Puntaje</div></div>
         </div>
-        <div style="text-align:center">
+        <div style="text-align:center; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
             <button class="btn btn-primary" onclick="restart()">Nuevo quiz ✨</button>
+            <a href="/dashboard.html" class="btn btn-success" style="text-decoration:none">Ver mi progreso →</a>
         </div>
     </div>
 
@@ -335,6 +339,27 @@
             document.getElementById('r-pct').textContent = pct + '%';
             document.getElementById('result-emoji').textContent = pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '💪';
             document.getElementById('result-msg').textContent = pct >= 80 ? '¡Excelente trabajo!' : pct >= 50 ? '¡Buen intento, sigue practicando!' : '¡No te rindas, puedes mejorar!';
+            guardarResultado();
+        }
+    }
+
+    async function guardarResultado() {
+        try {
+            const temas = [...new Set(questions.map(q => q.tema))].join(', ');
+            await fetch('/api/dashboard/guardar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({
+                    tema: temas,
+                    totalPreguntas: questions.length,
+                    correctas: score
+                })
+            });
+        } catch(e) {
+            console.log('Error guardando resultado:', e);
         }
     }
 
