@@ -31,7 +31,8 @@ public class SecurityConfig {
                     "/*.html",
                     "/api/auth/**",
                     "/api/quiz/**",
-                    "/api/dashboard/**"
+                    "/api/dashboard/**",
+                    "/api/pdf/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             );
