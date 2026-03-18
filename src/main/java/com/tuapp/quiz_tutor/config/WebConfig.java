@@ -15,7 +15,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        // Forzar UTF-8 como charset por defecto
         restTemplate.setMessageConverters(
                 restTemplate.getMessageConverters().stream().peek(converter -> {
                     if (converter instanceof org.springframework.http.converter.StringHttpMessageConverter stringConverter) {
@@ -26,11 +25,10 @@ public class WebConfig implements WebMvcConfigurer {
         return restTemplate;
     }
 
-    // Configuración de CORS para permitir peticiones desde el navegador en Railway
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://quiz-tutor-ia-production.up.railway.app", "http://localhost:8080")
+                .allowedOriginPatterns("*") // Permite cualquier origen para evitar bloqueos
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);

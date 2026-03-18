@@ -25,27 +25,27 @@
         btn.innerHTML = 'Iniciando sesión <span class="loader"><span></span><span></span><span></span></span>';
 
         try {
-            // Usamos ruta relativa para que funcione en localhost y en Railway automáticamente
+            // Usamos ./ para asegurar que use la URL actual (Railway o Local)
             const res = await fetch('./api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
             });
 
-            const data = await res.json();
-
             if (res.ok) {
+                const data = await res.json();
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('username', data.username);
                 window.location.href = 'index.html';
             } else {
-                // Manejar error si data es un string o un objeto
-                errorEl.textContent = typeof data === 'string' ? data : (data.message || 'Credenciales incorrectas');
+                // Intentamos leer el mensaje de error del servidor
+                const errorData = await res.text();
+                errorEl.textContent = errorData || 'Usuario o contraseña incorrectos';
                 errorEl.style.display = 'block';
             }
         } catch(e) {
             console.error("Error en login:", e);
-            errorEl.textContent = 'Error de conexión con el servidor. Intenta de nuevo.';
+            errorEl.textContent = 'Error de conexión. Verifica tu internet o el estado del servidor.';
             errorEl.style.display = 'block';
         } finally {
             btn.disabled = false;
