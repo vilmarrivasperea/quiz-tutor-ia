@@ -31,6 +31,7 @@
         .loader span:nth-child(2) { animation-delay: .2s; }
         .loader span:nth-child(3) { animation-delay: .4s; }
         @keyframes pulse { 0%,80%,100%{opacity:.3} 40%{opacity:1} }
+        .username-hint { background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; display: none; }
     </style>
 </head>
 <body>
@@ -51,6 +52,7 @@
         <h2>Bienvenido</h2>
         <p class="subtitle">Inicia sesión para continuar aprendiendo</p>
         <div class="error" id="error-msg"></div>
+        <div class="username-hint" id="username-hint"></div>
         <div class="field">
             <label>Usuario</label>
             <input type="text" id="username" placeholder="Ej: juan.perez">
@@ -63,10 +65,9 @@
         <div class="link">¿No tienes cuenta? <a href="/register.html">Regístrate aquí</a></div>
     </div>
 </div>
-
 <script>
     if (localStorage.getItem('token')) {
-        window.location.href = 'index.html';
+        window.location.href = '/index.html';
     }
 
     async function login() {
@@ -74,42 +75,37 @@
         const password = document.getElementById('password').value;
         const errorEl = document.getElementById('error-msg');
         const btn = document.getElementById('btn-login');
-        
         errorEl.style.display = 'none';
         if (!username || !password) {
             errorEl.textContent = 'Por favor completa todos los campos.';
             errorEl.style.display = 'block';
             return;
         }
-
         btn.disabled = true;
         btn.innerHTML = 'Iniciando sesión <span class="loader"><span></span><span></span><span></span></span>';
-
         try {
-            // USAMOS RUTA RELATIVA PARA RAILWAY
-            const res = await fetch('./api/auth/login', {
+            const res = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
             });
-
+            const data = await res.json();
             if (res.ok) {
-                const data = await res.json();
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('username', data.username);
-                window.location.href = 'index.html';
+                window.location.href = '/index.html';
             } else {
-                errorEl.textContent = 'Usuario o contraseña incorrectos';
+                errorEl.textContent = data;
                 errorEl.style.display = 'block';
             }
         } catch(e) {
-            errorEl.textContent = 'Error de conexión con el servidor.';
+            errorEl.textContent = 'Error de conexión. Intenta de nuevo.';
             errorEl.style.display = 'block';
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Iniciar sesión';
         }
+        btn.disabled = false;
+        btn.textContent = 'Iniciar sesión';
     }
+    document.addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
 </script>
 </body>
 </html>

@@ -13,7 +13,8 @@ import java.util.*;
 @Service
 public class GroqService {
 
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+    private static final String GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+    private static final String MODEL = "llama-3.3-70b-versatile";
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -40,7 +41,7 @@ public class GroqService {
             %s
             """, numPreguntas, texto);
 
-        String json = callGemini(prompt);
+        String json = callGroq(prompt);
         return parseQuizJson(json);
     }
 
@@ -51,14 +52,13 @@ public class GroqService {
             La respuesta correcta es: %s
             Da una explicación didáctica (2-4 párrafos).
             """, tema, pregunta, respuestaCorrecta);
-        return callGemini(prompt);
+        return callGroq(prompt);
     }
 
     public String generateSummary(String tema) {
         String prompt = String.format(
-            "Genera un resumen didáctico y claro del tema: %s. Usa 3-5 párrafos.",
-            tema);
-        return callGemini(prompt);
+            "Genera un resumen didáctico y claro del tema: %s. Usa 3-5 párrafos.", tema);
+        return callGroq(prompt);
     }
 
     public String generateExercise(String tema, String pregunta) {
@@ -66,39 +66,30 @@ public class GroqService {
             Para el tema "%s" y la pregunta "%s", genera un ejercicio o ejemplo práctico breve
             que ayude a afianzar el concepto (1-3 párrafos).
             """, tema, pregunta);
-        return callGemini(prompt);
+        return callGroq(prompt);
     }
 
-    private String callGemini(String userContent) {
+    private String callGroq(String userContent) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
 
-        Map<String, Object> part = new HashMap<>();
-        part.put("text", userContent);
-
-        Map<String, Object> content = new HashMap<>();
-        content.put("parts", List.of(part));
+        Map<String, Object> message = new HashMap<>();
+        message.put("role", "user");
+        message.put("content", userContent);
 
         Map<String, Object> body = new HashMap<>();
-        body.put("contents", List.of(content));
-
-        String urlWithKey = GEMINI_URL + "?key=" + apiKey;
+        body.put("model", MODEL);
+        body.put("messages", List.of(message));
+        body.put("max_tokens", 2000);
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<GeminiResponse> response = restTemplate.exchange(
-            urlWithKey,
-            HttpMethod.POST,
-            request,
-            GeminiResponse.class
-        );
+        ResponseEntity<Map> response = restTemplate.exchange(
+            GROQ_URL, HttpMethod.POST, request, Map.class);
 
-        if (response.getBody() == null || response.getBody().getCandidates() == null
-                || response.getBody().getCandidates().isEmpty()) {
-            throw new RuntimeException("Respuesta vacía de Gemini");
-        }
-
-        return response.getBody().getCandidates().get(0)
-                .getContent().getParts().get(0).getText();
+        List<Map> choices = (List<Map>) response.getBody().get("choices");
+        Map message2 = (Map) choices.get(0).get("message");
+        return (String) message2.get("content");
     }
 
     private List<QuizResponse> parseQuizJson(String json) {
@@ -115,29 +106,5 @@ public class GroqService {
         } catch (Exception e) {
             throw new RuntimeException("Error al parsear JSON de preguntas: " + e.getMessage());
         }
-    }
-
-    private static class GeminiResponse {
-        private List<Candidate> candidates;
-        public List<Candidate> getCandidates() { return candidates; }
-        public void setCandidates(List<Candidate> candidates) { this.candidates = candidates; }
-    }
-
-    private static class Candidate {
-        private ContentBlock content;
-        public ContentBlock getContent() { return content; }
-        public void setContent(ContentBlock content) { this.content = content; }
-    }
-
-    private static class ContentBlock {
-        private List<Part> parts;
-        public List<Part> getParts() { return parts; }
-        public void setParts(List<Part> parts) { this.parts = parts; }
-    }
-
-    private static class Part {
-        private String text;
-        public String getText() { return text; }
-        public void setText(String text) { this.text = text; }
     }
 }
