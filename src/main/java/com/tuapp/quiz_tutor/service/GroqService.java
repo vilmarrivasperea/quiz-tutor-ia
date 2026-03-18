@@ -13,8 +13,7 @@ import java.util.*;
 @Service
 public class GroqService {
 
-    private static final String GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-    private static final String MODEL = "llama-3.3-70b-versatile";
+    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -35,13 +34,13 @@ public class GroqService {
             - "opciones": array de 4 strings
             - "correcta": número (índice 0-3 de la opción correcta)
             - "tema": string (tema o categoría de la pregunta)
-            No incluyas explicaciones ni texto fuera del JSON.
+            No incluyas explicaciones ni texto fuera del JSON. No uses markdown ni backticks.
 
             Texto:
             %s
             """, numPreguntas, texto);
 
-        String json = callGroq(prompt);
+        String json = callGemini(prompt);
         return parseQuizJson(json);
     }
 
@@ -52,14 +51,14 @@ public class GroqService {
             La respuesta correcta es: %s
             Da una explicación didáctica (2-4 párrafos).
             """, tema, pregunta, respuestaCorrecta);
-        return callGroq(prompt);
+        return callGemini(prompt);
     }
 
     public String generateSummary(String tema) {
         String prompt = String.format(
             "Genera un resumen didáctico y claro del tema: %s. Usa 3-5 párrafos.",
             tema);
-        return callGroq(prompt);
+        return callGemini(prompt);
     }
 
     public String generateExercise(String tema, String pregunta) {
@@ -67,41 +66,45 @@ public class GroqService {
             Para el tema "%s" y la pregunta "%s", genera un ejercicio o ejemplo práctico breve
             que ayude a afianzar el concepto (1-3 párrafos).
             """, tema, pregunta);
-        return callGroq(prompt);
+        return callGemini(prompt);
     }
 
-    private String callGroq(String userContent) {
+    private String callGemini(String userContent) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
-        headers.set("Accept-Charset", "UTF-8");
+
+        Map<String, Object> part = new HashMap<>();
+        part.put("text", userContent);
+
+        Map<String, Object> content = new HashMap<>();
+        content.put("parts", List.of(part));
 
         Map<String, Object> body = new HashMap<>();
-        body.put("model", MODEL);
-        body.put("messages", List.of(
-            Map.of("role", "user", "content", userContent)
-        ));
-        body.put("temperature", 0.3);
+        body.put("contents", List.of(content));
+
+        String urlWithKey = GEMINI_URL + "?key=" + apiKey;
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<GroqChatResponse> response = restTemplate.exchange(
-            GROQ_URL,
+        ResponseEntity<GeminiResponse> response = restTemplate.exchange(
+            urlWithKey,
             HttpMethod.POST,
             request,
-            GroqChatResponse.class
+            GeminiResponse.class
         );
 
-        if (response.getBody() == null || response.getBody().getChoices() == null
-                || response.getBody().getChoices().isEmpty()) {
-            throw new RuntimeException("Respuesta vacía de Groq");
+        if (response.getBody() == null || response.getBody().getCandidates() == null
+                || response.getBody().getCandidates().isEmpty()) {
+            throw new RuntimeException("Respuesta vacía de Gemini");
         }
-        return response.getBody().getChoices().get(0).getMessage().getContent();
+
+        return response.getBody().getCandidates().get(0)
+                .getContent().getParts().get(0).getText();
     }
 
     private List<QuizResponse> parseQuizJson(String json) {
         try {
             String content = json.trim();
-            if (content.startsWith("```")) {
+            if (content.contains("```")) {
                 int start = content.indexOf('[');
                 int end = content.lastIndexOf(']') + 1;
                 if (start >= 0 && end > start) {
@@ -114,25 +117,27 @@ public class GroqService {
         }
     }
 
-    @SuppressWarnings("unused")
-    private static class GroqChatResponse {
-        private List<Choice> choices;
-
-        public List<Choice> getChoices() { return choices; }
-        public void setChoices(List<Choice> choices) { this.choices = choices; }
+    private static class GeminiResponse {
+        private List<Candidate> candidates;
+        public List<Candidate> getCandidates() { return candidates; }
+        public void setCandidates(List<Candidate> candidates) { this.candidates = candidates; }
     }
 
-    @SuppressWarnings("unused")
-    private static class Choice {
-        private Message message;
-        public Message getMessage() { return message; }
-        public void setMessage(Message message) { this.message = message; }
+    private static class Candidate {
+        private ContentBlock content;
+        public ContentBlock getContent() { return content; }
+        public void setContent(ContentBlock content) { this.content = content; }
     }
 
-    @SuppressWarnings("unused")
-    private static class Message {
-        private String content;
-        public String getContent() { return content; }
-        public void setContent(String content) { this.content = content; }
+    private static class ContentBlock {
+        private List<Part> parts;
+        public List<Part> getParts() { return parts; }
+        public void setParts(List<Part> parts) { this.parts = parts; }
+    }
+
+    private static class Part {
+        private String text;
+        public String getText() { return text; }
+        public void setText(String text) { this.text = text; }
     }
 }
