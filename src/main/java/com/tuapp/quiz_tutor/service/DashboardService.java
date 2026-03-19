@@ -14,6 +14,9 @@ public class DashboardService {
     @Autowired
     private QuizHistorialRepository historialRepository;
 
+    @Autowired
+    private LogroService logroService;
+
     public void guardarResultado(String username, String tema, int totalPreguntas, int correctas) {
         QuizHistorial historial = new QuizHistorial();
         historial.setUsername(username);
@@ -21,6 +24,11 @@ public class DashboardService {
         historial.setTotalPreguntas(totalPreguntas);
         historial.setCorrectas(correctas);
         historialRepository.save(historial);
+
+        // Verificar logros después de guardar
+        Long totalQuizzes = historialRepository.countByUsername(username);
+        int puntaje = totalPreguntas > 0 ? (int) Math.round((correctas * 100.0) / totalPreguntas) : 0;
+        logroService.verificarLogros(username, totalQuizzes.intValue(), puntaje, correctas);
     }
 
     public Map<String, Object> getDashboard(String username) {

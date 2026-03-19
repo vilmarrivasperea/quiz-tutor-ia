@@ -24,7 +24,6 @@
         .btn-success { background: linear-gradient(135deg, #059669, #10b981); color: white; }
         .btn-success:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(5,150,105,0.35); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-        .btn:active { transform: scale(0.98); }
         .option { display: block; width: 100%; text-align: left; padding: 14px 18px; margin-bottom: 10px; border: 2px solid #e0e7ff; border-radius: 12px; background: #f8faff; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.15s; font-family: 'Inter', sans-serif; color: #1e1b4b; }
         .option:hover:not(:disabled) { border-color: #4f46e5; background: #eef2ff; color: #4f46e5; transform: translateX(4px); }
         .option.correct { background: #ecfdf5; border-color: #10b981; color: #065f46; }
@@ -97,7 +96,6 @@
 </div>
 
 <div class="container">
-
     <div id="s-input" class="card active">
         <div class="illustration">
             <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -114,20 +112,17 @@
         <div class="section-title">Pega tu texto de estudio</div>
         <div class="section-sub">La IA generará preguntas personalizadas basadas en tu material</div>
         <p class="label">Texto de estudio</p>
-<textarea id="study-text" placeholder="Pega aquí tus apuntes, fragmentos del libro o cualquier tema que quieras repasar..."></textarea>
-<p class="hint">Funciona mejor con textos de 100 a 500 palabras</p>
-
-<div style="margin-top:16px;padding:16px;background:#f8faff;border:2px dashed #c7d2fe;border-radius:12px;text-align:center">
-    <p style="font-size:13px;color:#6b7280;margin-bottom:10px">O sube un archivo PDF</p>
-    <input type="file" id="pdf-input" accept=".pdf" style="display:none" onchange="uploadPdf(this)">
-    <button class="btn btn-primary" onclick="document.getElementById('pdf-input').click()" style="padding:8px 20px;font-size:13px">
-        Subir PDF
-    </button>
-    <div id="pdf-load" style="display:none;margin-top:10px;color:#4f46e5;font-size:13px;font-weight:500">
-        Extrayendo texto del PDF <span class="loader"><span></span><span></span><span></span></span>
-    </div>
-    <p id="pdf-nombre" style="font-size:12px;color:#10b981;margin-top:8px;display:none"></p>
-</div>
+        <textarea id="study-text" placeholder="Pega aquí tus apuntes, fragmentos del libro o cualquier tema que quieras repasar..."></textarea>
+        <p class="hint">Funciona mejor con textos de 100 a 500 palabras</p>
+        <div style="margin-top:16px;padding:16px;background:#f8faff;border:2px dashed #c7d2fe;border-radius:12px;text-align:center">
+            <p style="font-size:13px;color:#6b7280;margin-bottom:10px">O sube un archivo PDF</p>
+            <input type="file" id="pdf-input" accept=".pdf" style="display:none" onchange="uploadPdf(this)">
+            <button class="btn btn-primary" onclick="document.getElementById('pdf-input').click()" style="padding:8px 20px;font-size:13px">Subir PDF</button>
+            <div id="pdf-load" style="display:none;margin-top:10px;color:#4f46e5;font-size:13px;font-weight:500">
+                Extrayendo texto del PDF <span class="loader"><span></span><span></span><span></span></span>
+            </div>
+            <p id="pdf-nombre" style="font-size:12px;color:#10b981;margin-top:8px;display:none"></p>
+        </div>
         <div class="flex">
             <select id="num-q">
                 <option value="3">3 preguntas</option>
@@ -136,7 +131,7 @@
             </select>
             <button class="btn btn-primary" onclick="generateQuiz()">Generar quiz con IA ✨</button>
         </div>
-        <div id="gen-load" style="display:none; margin-top:16px; color:#4f46e5; font-size:14px; font-weight:500">
+        <div id="gen-load" style="display:none;margin-top:16px;color:#4f46e5;font-size:14px;font-weight:500">
             Generando preguntas <span class="loader"><span></span><span></span><span></span></span>
         </div>
     </div>
@@ -149,24 +144,24 @@
             </div>
             <div class="progress"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
         </div>
-        <p style="font-size:17px; font-weight:700; margin-bottom:20px; line-height:1.5; color:#1e1b4b" id="q-text"></p>
+        <p style="font-size:17px;font-weight:700;margin-bottom:20px;line-height:1.5;color:#1e1b4b" id="q-text"></p>
         <div id="opts"></div>
         <div id="feedback"></div>
-        <div id="next-ctrl" style="display:none; margin-top:16px">
+        <div id="next-ctrl" style="display:none;margin-top:16px">
             <button class="btn btn-primary" onclick="nextQuestion()">Siguiente pregunta →</button>
         </div>
     </div>
 
     <div id="s-learn" class="card">
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
             <div style="width:40px;height:40px;border-radius:10px;background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">💡</div>
             <div>
-                <p style="font-size:15px; font-weight:700; color:#1e1b4b">Respuesta incorrecta</p>
-                <p style="font-size:13px; color:#6b7280">No te preocupes, elige cómo quieres aprender</p>
+                <p style="font-size:15px;font-weight:700;color:#1e1b4b">Respuesta incorrecta</p>
+                <p style="font-size:13px;color:#6b7280">No te preocupes, elige cómo quieres aprender</p>
             </div>
         </div>
         <span class="tema-badge" id="learn-context"></span>
-        <p style="font-size:14px; font-weight:600; margin-bottom:4px">¿Cómo quieres aprender este tema?</p>
+        <p style="font-size:14px;font-weight:600;margin-bottom:4px">¿Cómo quieres aprender este tema?</p>
         <p class="hint" style="margin-bottom:12px">Puedes elegir una o varias opciones</p>
         <div class="checkbox-group">
             <label class="checkbox-item"><input type="checkbox" value="explicacion"><span class="chip-icon">🧠</span> Explicación de la IA</label>
@@ -175,11 +170,11 @@
             <label class="checkbox-item"><input type="checkbox" value="ejercicio"><span class="chip-icon">💻</span> Ejercicio práctico</label>
         </div>
         <button class="btn btn-primary" onclick="loadLearning()" style="margin-top:4px">Ver contenido ✨</button>
-        <div id="learn-load" style="display:none; margin-top:16px; color:#4f46e5; font-size:14px; font-weight:500">
+        <div id="learn-load" style="display:none;margin-top:16px;color:#4f46e5;font-size:14px;font-weight:500">
             Preparando tu contenido <span class="loader"><span></span><span></span><span></span></span>
         </div>
         <div id="learn-content" style="margin-top:20px"></div>
-        <div id="retry-btn" style="display:none; margin-top:16px">
+        <div id="retry-btn" style="display:none;margin-top:16px">
             <button class="btn btn-success" onclick="retryQuestion()">Ya entendí, reintentar la pregunta →</button>
         </div>
     </div>
@@ -192,12 +187,36 @@
             <div class="stat"><div class="stat-num" id="r-total">0</div><div class="stat-lbl">Preguntas</div></div>
             <div class="stat"><div class="stat-num" id="r-pct">0%</div><div class="stat-lbl">Puntaje</div></div>
         </div>
-        <div style="text-align:center; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <div style="text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
             <button class="btn btn-primary" onclick="restart()">Nuevo quiz ✨</button>
             <a href="/dashboard.html" class="btn btn-success" style="text-decoration:none">Ver mi progreso →</a>
         </div>
     </div>
+</div>
 
+<!-- CHAT FLOTANTE -->
+<div id="chat-btn" onclick="toggleChat()" style="position:fixed;bottom:24px;right:24px;z-index:999;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(79,70,229,0.5);font-size:24px;transition:transform 0.2s;">💬</div>
+
+<div id="chat-box" style="display:none;position:fixed;bottom:92px;right:24px;z-index:999;width:360px;height:500px;background:#1e1b4b;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.4);border:1px solid #4f46e5;flex-direction:column;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;">🤖</div>
+            <div>
+                <div style="color:white;font-weight:700;font-size:14px">QuizBot IA</div>
+                <div style="color:rgba(255,255,255,0.7);font-size:11px">● En línea</div>
+            </div>
+        </div>
+        <button onclick="toggleChat()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <div id="chat-msgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#0f0e2a;">
+        <div style="background:#1e1b4b;border-radius:12px 12px 12px 4px;padding:12px 14px;max-width:85%;font-size:13px;color:#e2e8f0;line-height:1.5;">
+            👋 ¡Hola! Soy <strong>QuizBot</strong>, tu tutor de IA. Puedo explicarte cualquier tema, resolver dudas o ayudarte a estudiar. ¿En qué te ayudo hoy?
+        </div>
+    </div>
+    <div style="padding:12px;background:#1e1b4b;border-top:1px solid #2d2b5e;display:flex;gap:8px;">
+        <input id="chat-input" type="text" placeholder="Escribe tu pregunta..." onkeypress="if(event.key==='Enter') sendChat()" style="flex:1;background:#0f0e2a;border:1px solid #4f46e5;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-size:13px;outline:none;font-family:inherit;">
+        <button onclick="sendChat()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;border-radius:8px;padding:10px 14px;color:white;cursor:pointer;font-size:16px;">➤</button>
+    </div>
 </div>
 
 <script>
@@ -309,24 +328,13 @@
             });
             const data = await res.json();
             const container = document.getElementById('learn-content');
-            if (data.explicacion) {
-                container.innerHTML += `<div class="learn-block"><div class="learn-block-title">🧠 Explicación de la IA</div>${data.explicacion}</div>`;
-            }
-            if (data.resumen) {
-                container.innerHTML += `<div class="learn-block"><div class="learn-block-title">📝 Resumen corto</div>${data.resumen}</div>`;
-            }
+            if (data.explicacion) container.innerHTML += `<div class="learn-block"><div class="learn-block-title">🧠 Explicación de la IA</div>${data.explicacion}</div>`;
+            if (data.resumen) container.innerHTML += `<div class="learn-block"><div class="learn-block-title">📝 Resumen corto</div>${data.resumen}</div>`;
             if (data.youtube) {
                 const query = encodeURIComponent(`${failedQ.tema} explicación en español`);
-                container.innerHTML += `<div class="learn-block"><div class="learn-block-title">▶️ Video de YouTube</div>
-                    <a class="yt-link" href="https://www.youtube.com/results?search_query=${query}" target="_blank">
-                        <div class="play"><svg width="12" height="12" viewBox="0 0 12 12" fill="white"><polygon points="3,2 10,6 3,10"/></svg></div>
-                        <div><div style="font-size:13px;font-weight:600">${failedQ.tema} — explicación en español</div>
-                        <div style="font-size:12px;color:#6b7280;margin-top:2px">Ver en YouTube →</div></div>
-                    </a></div>`;
+                container.innerHTML += `<div class="learn-block"><div class="learn-block-title">▶️ Video de YouTube</div><a class="yt-link" href="https://www.youtube.com/results?search_query=${query}" target="_blank"><div class="play"><svg width="12" height="12" viewBox="0 0 12 12" fill="white"><polygon points="3,2 10,6 3,10"/></svg></div><div><div style="font-size:13px;font-weight:600">${failedQ.tema} — explicación en español</div><div style="font-size:12px;color:#6b7280;margin-top:2px">Ver en YouTube →</div></div></a></div>`;
             }
-            if (data.ejercicio) {
-                container.innerHTML += `<div class="learn-block"><div class="learn-block-title">💻 Ejercicio práctico</div><pre style="font-size:13px;white-space:pre-wrap;line-height:1.7;font-family:'Inter',sans-serif">${data.ejercicio}</pre></div>`;
-            }
+            if (data.ejercicio) container.innerHTML += `<div class="learn-block"><div class="learn-block-title">💻 Ejercicio práctico</div><pre style="font-size:13px;white-space:pre-wrap;line-height:1.7;font-family:'Inter',sans-serif">${data.ejercicio}</pre></div>`;
         } catch(e) {
             document.getElementById('learn-content').innerHTML = '<p style="color:#ef4444">Error al cargar el contenido.</p>';
         }
@@ -334,10 +342,7 @@
         document.getElementById('retry-btn').style.display = 'block';
     }
 
-    function retryQuestion() {
-        show('s-quiz');
-        showQuestion();
-    }
+    function retryQuestion() { show('s-quiz'); showQuestion(); }
 
     function nextQuestion() {
         current++;
@@ -360,53 +365,106 @@
             const temas = [...new Set(questions.map(q => q.tema))].join(', ');
             await fetch('/api/dashboard/guardar', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
-                body: JSON.stringify({
-                    tema: temas,
-                    totalPreguntas: questions.length,
-                    correctas: score
-                })
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify({ tema: temas, totalPreguntas: questions.length, correctas: score })
             });
-        } catch(e) {
-            console.log('Error guardando resultado:', e);
-        }
+        } catch(e) { console.log('Error guardando resultado:', e); }
     }
+
     async function uploadPdf(input) {
-    const file = input.files[0];
-    if (!file) return;
-    document.getElementById('pdf-load').style.display = 'block';
-    document.getElementById('pdf-nombre').style.display = 'none';
-    const formData = new FormData();
-    formData.append('archivo', file);
-    try {
-        const res = await fetch('/api/pdf/extraer', {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + token },
-            body: formData
-        });
-        
-        const data = await res.json();
-        if (data.texto) {
-            document.getElementById('study-text').value = data.texto;
-            document.getElementById('pdf-nombre').textContent = '✓ ' + file.name + ' cargado correctamente';
-            document.getElementById('pdf-nombre').style.display = 'block';
-        } else {
-            alert('No se pudo extraer texto del PDF.');
-        }
-    } catch(e) {
-        alert('Error al subir el PDF.');
+        const file = input.files[0];
+        if (!file) return;
+        document.getElementById('pdf-load').style.display = 'block';
+        document.getElementById('pdf-nombre').style.display = 'none';
+        const formData = new FormData();
+        formData.append('archivo', file);
+        try {
+            const res = await fetch('/api/pdf/extraer', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + token },
+                body: formData
+            });
+            const data = await res.json();
+            if (data.texto) {
+                document.getElementById('study-text').value = data.texto;
+                document.getElementById('pdf-nombre').textContent = '✓ ' + file.name + ' cargado correctamente';
+                document.getElementById('pdf-nombre').style.display = 'block';
+            } else {
+                alert('No se pudo extraer texto del PDF.');
+            }
+        } catch(e) { alert('Error al subir el PDF.'); }
+        document.getElementById('pdf-load').style.display = 'none';
+        input.value = '';
     }
-    document.getElementById('pdf-load').style.display = 'none';
-    input.value = '';
-}
 
     function restart() {
         questions = []; current = 0; score = 0; failedQ = null;
         document.getElementById('study-text').value = '';
         show('s-input');
+    }
+
+    // CHAT
+    let chatHistorial = [];
+    let chatAbierto = false;
+
+    function toggleChat() {
+        chatAbierto = !chatAbierto;
+        const box = document.getElementById('chat-box');
+        const btn = document.getElementById('chat-btn');
+        box.style.display = chatAbierto ? 'flex' : 'none';
+        btn.textContent = chatAbierto ? '×' : '💬';
+        if (chatAbierto) document.getElementById('chat-input').focus();
+    }
+
+    async function sendChat() {
+        const input = document.getElementById('chat-input');
+        const mensaje = input.value.trim();
+        if (!mensaje) return;
+        input.value = '';
+        addMsg(mensaje, 'user');
+        chatHistorial.push({ role: 'user', content: mensaje });
+        const typingId = 'typing-' + Date.now();
+        addTyping(typingId);
+        try {
+            const res = await fetch('/api/chat/mensaje', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify({ mensaje, historial: chatHistorial.slice(-10) })
+            });
+            const data = await res.json();
+            removeTyping(typingId);
+            addMsg(data.respuesta, 'bot');
+            chatHistorial.push({ role: 'assistant', content: data.respuesta });
+        } catch(e) {
+            removeTyping(typingId);
+            addMsg('❌ Error al conectar. Intenta de nuevo.', 'bot');
+        }
+    }
+
+    function addMsg(texto, rol) {
+        const msgs = document.getElementById('chat-msgs');
+        const div = document.createElement('div');
+        div.style.cssText = rol === 'user'
+            ? 'background:#4f46e5;border-radius:12px 12px 4px 12px;padding:10px 14px;max-width:85%;font-size:13px;color:white;line-height:1.5;align-self:flex-end;margin-left:auto;'
+            : 'background:#1e1b4b;border-radius:12px 12px 12px 4px;padding:10px 14px;max-width:85%;font-size:13px;color:#e2e8f0;line-height:1.5;';
+        div.textContent = texto;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function addTyping(id) {
+        const msgs = document.getElementById('chat-msgs');
+        const div = document.createElement('div');
+        div.id = id;
+        div.style.cssText = 'background:#1e1b4b;border-radius:12px;padding:10px 14px;font-size:13px;color:#9ca3af;';
+        div.textContent = 'QuizBot está escribiendo...';
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function removeTyping(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
     }
 </script>
 </body>

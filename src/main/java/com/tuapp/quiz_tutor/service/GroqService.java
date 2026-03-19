@@ -91,6 +91,48 @@ public class GroqService {
         Map message2 = (Map) choices.get(0).get("message");
         return (String) message2.get("content");
     }
+    public String chat(String mensaje, List<Map<String, String>> historial) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+    
+        List<Map<String, Object>> messages = new java.util.ArrayList<>();
+    
+        // Personalidad del tutor
+        Map<String, Object> system = new HashMap<>();
+        system.put("role", "system");
+        system.put("content", "Eres un tutor educativo amigable llamado QuizBot. Ayudas a estudiantes a entender temas académicos de forma clara y concisa. Respondes siempre en español. Eres paciente, motivador y explicas con ejemplos prácticos.");
+        messages.add(system);
+    
+        // Historial de la conversación
+        if (historial != null) {
+            for (Map<String, String> msg : historial) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("role", msg.get("role"));
+                m.put("content", msg.get("content"));
+                messages.add(m);
+            }
+        }
+    
+        // Mensaje actual
+        Map<String, Object> userMsg = new HashMap<>();
+        userMsg.put("role", "user");
+        userMsg.put("content", mensaje);
+        messages.add(userMsg);
+    
+        Map<String, Object> body = new HashMap<>();
+        body.put("model", MODEL);
+        body.put("messages", messages);
+        body.put("max_tokens", 1000);
+    
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+        ResponseEntity<Map> response = restTemplate.exchange(
+            GROQ_URL, HttpMethod.POST, request, Map.class);
+    
+        List<Map> choices = (List<Map>) response.getBody().get("choices");
+        Map message2 = (Map) choices.get(0).get("message");
+        return (String) message2.get("content");
+    }
 
     private List<QuizResponse> parseQuizJson(String json) {
         try {
