@@ -384,8 +384,10 @@
     try {
         const res = await fetch('/api/pdf/extraer', {
             method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
             body: formData
         });
+        
         const data = await res.json();
         if (data.texto) {
             document.getElementById('study-text').value = data.texto;
