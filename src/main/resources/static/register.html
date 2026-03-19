@@ -106,10 +106,11 @@
                 successEl.style.display = 'block';
                 setTimeout(() => window.location.href = '/index.html', 1500);
             } else {
-                errorEl.textContent = data;
+                errorEl.textContent = data.message || data || 'Error al crear cuenta';
                 errorEl.style.display = 'block';
             }
         } catch(e) {
+            console.error(e);
             errorEl.textContent = 'Error de conexión. Intenta de nuevo.';
             errorEl.style.display = 'block';
         }
