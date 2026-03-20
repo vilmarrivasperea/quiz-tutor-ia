@@ -55,8 +55,12 @@
         .logro-toast { position: fixed; top: 80px; right: 24px; z-index: 9999; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; padding: 16px 20px; border-radius: 16px; box-shadow: 0 8px 32px rgba(79,70,229,0.4); display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 600; transform: translateX(400px); transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); max-width: 320px; }
         .logro-toast.show { transform: translateX(0); }
         .logro-toast-emoji { font-size: 32px; flex-shrink: 0; }
+        .chart-card { background: white; border-radius: 16px; padding: 24px; border: 1px solid #e0e7ff; margin-bottom: 32px; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .chart-title { font-size: 16px; font-weight: 700; color: #1e1b4b; }
+        .chart-badge { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; background: #eef2ff; color: #4f46e5; }
     </style>
-</head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <body>
 
 <div class="header">
@@ -75,6 +79,16 @@
     <div id="loading" class="loader-wrap">Cargando tu progreso...</div>
     <div id="content" style="display:none">
         <div class="stat-grid" id="stats-grid"></div>
+
+        <!-- GRÁFICA DE EVOLUCIÓN -->
+        <div class="chart-card" id="chart-wrap" style="display:none">
+            <div class="chart-header">
+                <div class="chart-title">📈 Evolución de puntajes</div>
+                <div class="chart-badge" id="chart-badge">0 quizzes</div>
+            </div>
+            <canvas id="grafica-evolucion" height="100"></canvas>
+        </div>
+
         <p class="section-title">🏆 Mis logros</p>
         <div class="logros-grid" id="logros-grid"></div>
         <p class="section-title">Historial de quizzes</p>
@@ -145,6 +159,7 @@
             document.getElementById('loading').style.display = 'none';
             document.getElementById('content').style.display = 'block';
             renderStats(data);
+            renderGrafica(data.historial);
             renderLogros(logros);
             renderHistorial(data.historial);
         } catch(e) {
@@ -186,6 +201,69 @@
                     </div>`;
             }
         }).join('');
+    }
+
+    function renderGrafica(historial) {
+        if (!historial || historial.length < 2) return;
+        document.getElementById('chart-wrap').style.display = 'block';
+        document.getElementById('chart-badge').textContent = historial.length + ' quizzes';
+
+        // Invertir para mostrar del más antiguo al más reciente
+        const data = [...historial].reverse();
+        const labels = data.map((h, i) => {
+            const fecha = new Date(h.fecha);
+            return fecha.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
+        });
+        const puntajes = data.map(h => h.puntaje);
+
+        const ctx = document.getElementById('grafica-evolucion').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Puntaje',
+                    data: puntajes,
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79,70,229,0.08)',
+                    borderWidth: 3,
+                    pointBackgroundColor: puntajes.map(p => p >= 80 ? '#059669' : p >= 50 ? '#d97706' : '#dc2626'),
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` Puntaje: ${ctx.raw}%`,
+                            title: (items) => {
+                                const h = data[items[0].dataIndex];
+                                return h.tema.length > 30 ? h.tema.substring(0, 30) + '...' : h.tema;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 0, max: 100,
+                        ticks: {
+                            callback: val => val + '%',
+                            font: { size: 11 }
+                        },
+                        grid: { color: '#f0f4ff' }
+                    },
+                    x: {
+                        ticks: { font: { size: 11 } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
     }
 
     function renderStats(data) {

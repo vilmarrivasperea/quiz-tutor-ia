@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/quiz")
-@CrossOrigin
 public class QuizController {
 
     private final GroqService groqService;
@@ -24,7 +23,8 @@ public class QuizController {
 
     @PostMapping("/generate")
     public ResponseEntity<List<QuizResponse>> generate(@RequestBody QuizRequest request) {
-        List<QuizResponse> quiz = groqService.generateQuiz(request.getTexto(), request.getNumPreguntas());
+        String dificultad = request.getDificultad() != null ? request.getDificultad() : "medio";
+        List<QuizResponse> quiz = groqService.generateQuiz(request.getTexto(), request.getNumPreguntas(), dificultad);
         return ResponseEntity.ok(quiz);
     }
 

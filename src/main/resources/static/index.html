@@ -73,6 +73,24 @@
         .username-tag { color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 500; }
         .dashboard-btn { padding: 8px 16px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; text-decoration: none; }
         .dashboard-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* TEMPORIZADOR */
+        .timer-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .timer-circle { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; flex-shrink: 0; position: relative; }
+        .timer-circle svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+        .timer-num { position: relative; z-index: 1; }
+        .timer-bar { flex: 1; height: 6px; background: #e0e7ff; border-radius: 3px; overflow: hidden; }
+        .timer-fill { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #10b981, #4f46e5); transition: width 1s linear, background 0.5s; }
+        .timer-fill.warning { background: linear-gradient(90deg, #f97316, #ef4444); }
+        .timer-label { font-size: 12px; color: #6b7280; font-weight: 500; white-space: nowrap; }
+        .timer-badge { display: inline-flex; align-items: center; gap: 6px; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+
+        /* INPUT TIEMPO */
+        .tiempo-input { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: #f8faff; border: 2px solid #e0e7ff; border-radius: 12px; margin-top: 12px; }
+        .tiempo-input input { width: 70px; padding: 8px 12px; border: 2px solid #e0e7ff; border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; color: #1e1b4b; background: white; text-align: center; font-weight: 700; outline: none; }
+        .tiempo-input input:focus { border-color: #4f46e5; }
+        .tiempo-input label { font-size: 13px; color: #6b7280; }
+        .tiempo-input .tiempo-info { font-size: 12px; color: #9ca3af; margin-left: auto; }
     </style>
 </head>
 <body>
@@ -123,12 +141,68 @@
             </div>
             <p id="pdf-nombre" style="font-size:12px;color:#10b981;margin-top:8px;display:none"></p>
         </div>
-        <div class="flex">
-            <select id="num-q">
-                <option value="3">3 preguntas</option>
-                <option value="5" selected>5 preguntas</option>
-                <option value="7">7 preguntas</option>
-            </select>
+
+        <!-- CONFIGURACIÓN DEL QUIZ -->
+        <div style="margin-top:20px;padding:16px;background:#f8faff;border:1px solid #e0e7ff;border-radius:12px;">
+            <p class="label" style="margin-bottom:12px">⚙️ Configuración del quiz</p>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
+                <div>
+                    <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:6px">Número de preguntas</label>
+                    <select id="num-q">
+                        <option value="3">3 preguntas</option>
+                        <option value="5" selected>5 preguntas</option>
+                        <option value="7">7 preguntas</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:6px">⏱️ Tiempo por pregunta (segundos)</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input type="number" id="tiempo-pregunta" min="0" max="600" value="0"
+                            style="width:80px;padding:10px 12px;border:2px solid #e0e7ff;border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;color:#1e1b4b;background:white;text-align:center;font-weight:700;outline:none;"
+                            placeholder="0">
+                        <span style="font-size:12px;color:#9ca3af;">seg (0 = sin límite)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SELECTOR DE DIFICULTAD -->
+            <div style="margin-top:16px;">
+                <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:10px">🎯 Dificultad del quiz</label>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <label style="flex:1;min-width:140px;cursor:pointer;">
+                        <input type="radio" name="dificultad" value="facil" style="display:none" onchange="cambiarDificultad('facil')">
+                        <div id="btn-facil" onclick="seleccionarDificultad('facil')" style="padding:12px 16px;border:2px solid #10b981;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.2s;background:#ecfdf5;">
+                            <div style="font-size:20px;margin-bottom:4px;">🟢</div>
+                            <div style="font-size:13px;font-weight:700;color:#059669;">Fácil</div>
+                            <div style="font-size:11px;color:#6b7280;margin-top:2px;">4 opciones · Directo</div>
+                        </div>
+                    </label>
+                    <label style="flex:1;min-width:140px;cursor:pointer;">
+                        <input type="radio" name="dificultad" value="medio" checked style="display:none" onchange="cambiarDificultad('medio')">
+                        <div id="btn-medio" onclick="seleccionarDificultad('medio')" style="padding:12px 16px;border:2px solid #4f46e5;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.2s;background:#eef2ff;">
+                            <div style="font-size:20px;margin-bottom:4px;">🟡</div>
+                            <div style="font-size:13px;font-weight:700;color:#4f46e5;">Medio</div>
+                            <div style="font-size:11px;color:#6b7280;margin-top:2px;">4 opciones · Comprensión</div>
+                        </div>
+                    </label>
+                    <label style="flex:1;min-width:140px;cursor:pointer;">
+                        <input type="radio" name="dificultad" value="dificil" style="display:none" onchange="cambiarDificultad('dificil')">
+                        <div id="btn-dificil" onclick="seleccionarDificultad('dificil')" style="padding:12px 16px;border:2px solid #e0e7ff;border-radius:12px;text-align:center;cursor:pointer;transition:all 0.2s;background:#f8faff;">
+                            <div style="font-size:20px;margin-bottom:4px;">🔴</div>
+                            <div style="font-size:13px;font-weight:700;color:#dc2626;">Difícil</div>
+                            <div style="font-size:11px;color:#6b7280;margin-top:2px;">5 opciones · Con trampa 🎭</div>
+                        </div>
+                    </label>
+                </div>
+                <div id="dificultad-info" style="margin-top:8px;font-size:11px;color:#9ca3af;padding:8px 12px;background:#f8faff;border-radius:8px;">
+                    🟡 <strong>Medio:</strong> Preguntas de comprensión con opciones parecidas
+                </div>
+            </div>
+
+            <p style="font-size:11px;color:#9ca3af;margin-top:10px;">💡 El temporizador solo aplica cuando reintentes una pregunta después de recibir tutoría</p>
+        </div>
+
+        <div class="flex" style="margin-top:16px;">
             <button class="btn btn-primary" onclick="generateQuiz()">Generar quiz con IA ✨</button>
         </div>
         <div id="gen-load" style="display:none;margin-top:16px;color:#4f46e5;font-size:14px;font-weight:500">
@@ -140,10 +214,31 @@
         <div class="progress-wrap">
             <div class="progress-top">
                 <span class="q-counter" id="q-counter">Pregunta 1 de 5</span>
-                <span class="score-badge" id="score-badge">0 correctas</span>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span id="dificultad-badge" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#eef2ff;color:#4f46e5;">🟡 Medio</span>
+                    <span class="score-badge" id="score-badge">0 correctas</span>
+                </div>
             </div>
             <div class="progress"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
         </div>
+
+        <!-- TEMPORIZADOR -->
+        <div id="timer-wrap" style="display:none;margin-bottom:16px;">
+            <div class="timer-badge">⏱️ Modo reintento — <span id="timer-label-seg">0</span> seg por pregunta</div>
+            <div class="timer-wrap">
+                <div class="timer-circle" id="timer-circle" style="border: 3px solid #e0e7ff;">
+                    <svg width="56" height="56" viewBox="0 0 56 56">
+                        <circle id="timer-svg-circle" cx="28" cy="28" r="24" fill="none" stroke="#4f46e5" stroke-width="3" stroke-dasharray="150.8" stroke-dashoffset="0" style="transition:stroke-dashoffset 1s linear;"/>
+                    </svg>
+                    <span class="timer-num" id="timer-num" style="font-size:14px;font-weight:800;color:#4f46e5;">0</span>
+                </div>
+                <div class="timer-bar">
+                    <div class="timer-fill" id="timer-fill" style="width:100%"></div>
+                </div>
+                <span class="timer-label" id="timer-label">Tiempo restante</span>
+            </div>
+        </div>
+
         <p style="font-size:17px;font-weight:700;margin-bottom:20px;line-height:1.5;color:#1e1b4b" id="q-text"></p>
         <div id="opts"></div>
         <div id="feedback"></div>
@@ -196,28 +291,15 @@
 
 <!-- BURBUJA RACHA -->
 <div id="racha-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:998;backdrop-filter:blur(4px);" onclick="cerrarRacha()"></div>
-
 <div id="racha-burbuja" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.5);z-index:999;background:white;border-radius:28px;padding:32px;width:320px;text-align:center;box-shadow:0 24px 80px rgba(79,70,229,0.3);border:2px solid #e0e7ff;transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1),opacity 0.3s;opacity:0;">
-
-    <!-- Partículas -->
     <div id="particulas" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:28px;"></div>
-
-    <!-- Avatar -->
     <div style="position:relative;margin-bottom:16px;">
         <div id="racha-avatar" style="font-size:80px;line-height:1;animation:avatarBounce 0.8s ease infinite alternate;">🐣</div>
-        <div id="racha-dias-badge" style="position:absolute;bottom:-8px;right:50%;transform:translateX(60px);background:linear-gradient(135deg,#f97316,#ef4444);color:white;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:800;box-shadow:0 4px 12px rgba(239,68,68,0.4);">
-            🔥 <span id="racha-dias-num">0</span> días
-        </div>
+        <div style="position:absolute;bottom:-8px;right:50%;transform:translateX(60px);background:linear-gradient(135deg,#f97316,#ef4444);color:white;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:800;box-shadow:0 4px 12px rgba(239,68,68,0.4);">🔥 <span id="racha-dias-num">0</span> días</div>
     </div>
-
-    <!-- Nombre avatar -->
     <div id="racha-nombre-avatar" style="font-size:12px;font-weight:700;color:#4f46e5;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;margin-top:8px;">Pollito Aprendiz</div>
-
-    <!-- Mensaje -->
     <div id="racha-mensaje" style="font-size:18px;font-weight:800;color:#1e1b4b;margin-bottom:8px;line-height:1.3;">¡Hoy empezó tu racha!</div>
-
-    <!-- Barra progreso al siguiente -->
-    <div id="racha-proximo-wrap" style="margin:16px 0;">
+    <div style="margin:16px 0;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <span style="font-size:12px;color:#6b7280">Nivel actual</span>
             <span style="font-size:12px;color:#6b7280">Próximo: <span id="racha-proximo-avatar">🐱</span></span>
@@ -227,105 +309,64 @@
         </div>
         <div id="racha-proximo-texto" style="font-size:11px;color:#9ca3af;margin-top:4px;text-align:right;"></div>
     </div>
-
-    <!-- Regalo subida de nivel -->
-    <div id="nivel-up" style="display:none;background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:16px;padding:12px;margin-bottom:16px;animation:giftPop 0.5s ease;">
+    <div id="nivel-up" style="display:none;background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:16px;padding:12px;margin-bottom:16px;">
         <div style="font-size:28px;margin-bottom:4px;">🎁✨</div>
         <div style="font-size:13px;font-weight:700;color:#92400e;">¡SUBISTE DE NIVEL!</div>
         <div id="nivel-up-texto" style="font-size:12px;color:#b45309;"></div>
     </div>
-
-    <button onclick="cerrarRacha()" style="width:100%;padding:14px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-        ¡A estudiar! 🚀
-    </button>
+    <button onclick="cerrarRacha()" style="width:100%;padding:14px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">¡A estudiar! 🚀</button>
 </div>
-
-<!-- Toast subida nivel -->
 <div id="nivel-toast" style="position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-100px);z-index:9999;background:linear-gradient(135deg,#f97316,#ef4444);color:white;padding:14px 24px;border-radius:20px;box-shadow:0 8px 32px rgba(239,68,68,0.4);font-size:15px;font-weight:700;transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1);display:flex;align-items:center;gap:10px;">
     <span style="font-size:24px" id="toast-avatar">🐱</span>
-    <div>
-        <div style="font-size:11px;opacity:0.8">¡NUEVO NIVEL!</div>
-        <div id="toast-nivel-nombre">Gatito Curioso</div>
-    </div>
+    <div><div style="font-size:11px;opacity:0.8">¡NUEVO NIVEL!</div><div id="toast-nivel-nombre">Gatito Curioso</div></div>
 </div>
 
 <style>
 @keyframes avatarBounce { from { transform: translateY(0) scale(1); } to { transform: translateY(-8px) scale(1.05); } }
 @keyframes giftPop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-@keyframes particleFloat {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
-}
+@keyframes particleFloat { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-200px) rotate(360deg); opacity: 0; } }
 </style>
 
 <script>
 const rachaToken = localStorage.getItem('token');
-
 async function cargarRacha() {
     if (!rachaToken) return;
     try {
-        const res = await fetch('/api/racha/actualizar', {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + rachaToken }
-        });
+        const res = await fetch('/api/racha/actualizar', { method: 'POST', headers: { 'Authorization': 'Bearer ' + rachaToken } });
         const data = await res.json();
         mostrarBurbuja(data);
-    } catch(e) {
-        console.log('Error cargando racha:', e);
-    }
+    } catch(e) { console.log('Error cargando racha:', e); }
 }
-
 function mostrarBurbuja(data) {
     document.getElementById('racha-avatar').textContent = data.avatar;
     document.getElementById('racha-dias-num').textContent = data.dias;
     document.getElementById('racha-nombre-avatar').textContent = data.nombreAvatar;
     document.getElementById('racha-mensaje').textContent = data.mensaje;
     document.getElementById('racha-proximo-avatar').textContent = data.proximoAvatar;
-
-    // Barra de progreso al siguiente nivel
-    const nivelActual = data.nivel;
     const limites = [0, 1, 3, 5, 7, 14, 21];
-    const inicio = limites[nivelActual - 1] || 0;
-    const fin = limites[nivelActual] || 21;
+    const inicio = limites[data.nivel - 1] || 0;
+    const fin = limites[data.nivel] || 21;
     const pct = fin > inicio ? Math.min(((data.dias - inicio) / (fin - inicio)) * 100, 100) : 100;
     setTimeout(() => { document.getElementById('racha-barra').style.width = pct + '%'; }, 300);
-
-    if (data.proximoEn > 0) {
-        document.getElementById('racha-proximo-texto').textContent = `Faltan ${data.proximoEn} días para ${data.proximoAvatar}`;
-    } else {
-        document.getElementById('racha-proximo-texto').textContent = '¡Nivel máximo alcanzado! 👑';
-    }
-
-    // Si subió de nivel mostrar regalo
+    document.getElementById('racha-proximo-texto').textContent = data.proximoEn > 0 ? `Faltan ${data.proximoEn} días para ${data.proximoAvatar}` : '¡Nivel máximo alcanzado! 👑';
     if (data.subioNivel && data.dias > 1) {
         document.getElementById('nivel-up').style.display = 'block';
         document.getElementById('nivel-up-texto').textContent = `¡Ahora eres ${data.nombreAvatar}!`;
         lanzarParticulas();
         mostrarToastNivel(data);
     }
-
-    // Mostrar burbuja
     const overlay = document.getElementById('racha-overlay');
     const burbuja = document.getElementById('racha-burbuja');
     overlay.style.display = 'block';
     burbuja.style.display = 'block';
-    setTimeout(() => {
-        burbuja.style.transform = 'translate(-50%,-50%) scale(1)';
-        burbuja.style.opacity = '1';
-    }, 50);
+    setTimeout(() => { burbuja.style.transform = 'translate(-50%,-50%) scale(1)'; burbuja.style.opacity = '1'; }, 50);
 }
-
 function cerrarRacha() {
-    const overlay = document.getElementById('racha-overlay');
     const burbuja = document.getElementById('racha-burbuja');
     burbuja.style.transform = 'translate(-50%,-50%) scale(0.8)';
     burbuja.style.opacity = '0';
-    setTimeout(() => {
-        burbuja.style.display = 'none';
-        overlay.style.display = 'none';
-    }, 300);
+    setTimeout(() => { burbuja.style.display = 'none'; document.getElementById('racha-overlay').style.display = 'none'; }, 300);
 }
-
 function lanzarParticulas() {
     const container = document.getElementById('particulas');
     const emojis = ['⭐','✨','🎉','💫','🎊','❤️','🔥'];
@@ -339,39 +380,28 @@ function lanzarParticulas() {
         }, i * 80);
     }
 }
-
 function mostrarToastNivel(data) {
     const toast = document.getElementById('nivel-toast');
     document.getElementById('toast-avatar').textContent = data.avatar;
     document.getElementById('toast-nivel-nombre').textContent = data.nombreAvatar;
     toast.style.transform = 'translateX(-50%) translateY(0)';
-    setTimeout(() => {
-        toast.style.transform = 'translateX(-50%) translateY(-100px)';
-    }, 3000);
+    setTimeout(() => { toast.style.transform = 'translateX(-50%) translateY(-100px)'; }, 3000);
 }
-
-// Cargar racha al entrar
 setTimeout(cargarRacha, 800);
 </script>
 
 <!-- CHAT FLOTANTE -->
 <div id="chat-btn" onclick="toggleChat()" style="position:fixed;bottom:24px;right:24px;z-index:999;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(79,70,229,0.5);font-size:24px;transition:transform 0.2s;">💬</div>
-
 <div id="chat-box" style="display:none;position:fixed;bottom:92px;right:24px;z-index:999;width:360px;height:500px;background:#1e1b4b;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.4);border:1px solid #4f46e5;flex-direction:column;overflow:hidden;">
     <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;">🤖</div>
-            <div>
-                <div style="color:white;font-weight:700;font-size:14px">QuizBot IA</div>
-                <div style="color:rgba(255,255,255,0.7);font-size:11px">● En línea</div>
-            </div>
+            <div><div style="color:white;font-weight:700;font-size:14px">QuizBot IA</div><div style="color:rgba(255,255,255,0.7);font-size:11px">● En línea</div></div>
         </div>
         <button onclick="toggleChat()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;">×</button>
     </div>
     <div id="chat-msgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#0f0e2a;">
-        <div style="background:#1e1b4b;border-radius:12px 12px 12px 4px;padding:12px 14px;max-width:85%;font-size:13px;color:#e2e8f0;line-height:1.5;">
-            👋 ¡Hola! Soy <strong>QuizBot</strong>, tu tutor de IA. Puedo explicarte cualquier tema, resolver dudas o ayudarte a estudiar. ¿En qué te ayudo hoy?
-        </div>
+        <div style="background:#1e1b4b;border-radius:12px 12px 12px 4px;padding:12px 14px;max-width:85%;font-size:13px;color:#e2e8f0;line-height:1.5;">👋 ¡Hola! Soy <strong>QuizBot</strong>, tu tutor de IA. ¿En qué te ayudo hoy?</div>
     </div>
     <div style="padding:12px;background:#1e1b4b;border-top:1px solid #2d2b5e;display:flex;gap:8px;">
         <input id="chat-input" type="text" placeholder="Escribe tu pregunta..." onkeypress="if(event.key==='Enter') sendChat()" style="flex:1;background:#0f0e2a;border:1px solid #4f46e5;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-size:13px;outline:none;font-family:inherit;">
@@ -382,51 +412,68 @@ setTimeout(cargarRacha, 800);
 <script>
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
-    if (!token) {
-        window.location.href = '/login.html';
-    } else {
-        document.getElementById('username-display').textContent = username;
-    }
+    if (!token) { window.location.href = '/login.html'; }
+    else { document.getElementById('username-display').textContent = username; }
 
-    function logout() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        window.location.href = '/login.html';
-    }
+    function logout() { localStorage.removeItem('token'); localStorage.removeItem('username'); window.location.href = '/login.html'; }
 
     let questions = [], current = 0, score = 0, failedQ = null;
+    let tiempoSegundos = 0;
+    let esReintento = false;
+    let timerInterval = null;
+    let timerRestante = 0;
+    let dificultadSeleccionada = 'medio';
+
+    function seleccionarDificultad(d) {
+        dificultadSeleccionada = d;
+        const btns = { facil: document.getElementById('btn-facil'), medio: document.getElementById('btn-medio'), dificil: document.getElementById('btn-dificil') };
+        const colores = { facil: { border: '#10b981', bg: '#ecfdf5' }, medio: { border: '#4f46e5', bg: '#eef2ff' }, dificil: { border: '#ef4444', bg: '#fef2f2' } };
+        const inactivo = { border: '#e0e7ff', bg: '#f8faff' };
+        const info = {
+            facil: '🟢 <strong>Fácil:</strong> Preguntas directas y simples, respuesta obvia si leíste el texto',
+            medio: '🟡 <strong>Medio:</strong> Preguntas de comprensión con opciones parecidas',
+            dificil: '🔴 <strong>Difícil:</strong> 5 opciones — 4 del tema + 1 opción trampa de otro tema 🎭'
+        };
+        Object.keys(btns).forEach(k => {
+            const activo = k === d;
+            btns[k].style.border = `2px solid ${activo ? colores[k].border : inactivo.border}`;
+            btns[k].style.background = activo ? colores[k].bg : inactivo.bg;
+            btns[k].style.transform = activo ? 'scale(1.03)' : 'scale(1)';
+        });
+        document.getElementById('dificultad-info').innerHTML = info[d];
+        document.querySelector(`input[name="dificultad"][value="${d}"]`).checked = true;
+    }
 
     async function generateQuiz() {
         const texto = document.getElementById('study-text').value.trim();
         if (!texto) { alert('Por favor pega tu texto de estudio primero.'); return; }
         const numPreguntas = parseInt(document.getElementById('num-q').value);
+        tiempoSegundos = parseInt(document.getElementById('tiempo-pregunta').value) || 0;
+        if (tiempoSegundos > 600) { alert('El tiempo máximo es 600 segundos (10 minutos).'); return; }
         document.getElementById('gen-load').style.display = 'block';
         document.querySelector('#s-input .btn-primary').disabled = true;
         try {
             const res = await fetch('/api/quiz/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                body: JSON.stringify({ texto, numPreguntas })
+                body: JSON.stringify({ texto, numPreguntas, dificultad: dificultadSeleccionada })
             });
             questions = await res.json();
-            current = 0; score = 0;
+            current = 0; score = 0; esReintento = false;
             show('s-quiz');
             showQuestion();
-        } catch(e) {
-            alert('Error al generar el quiz. Intenta de nuevo.');
-        }
+        } catch(e) { alert('Error al generar el quiz. Intenta de nuevo.'); }
         document.getElementById('gen-load').style.display = 'none';
         document.querySelector('#s-input .btn-primary').disabled = false;
     }
 
     function show(id) {
-        ['s-input','s-quiz','s-learn','s-results'].forEach(s => {
-            document.getElementById(s).classList.remove('active');
-        });
+        ['s-input','s-quiz','s-learn','s-results'].forEach(s => document.getElementById(s).classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
     function showQuestion() {
+        detenerTimer();
         const q = questions[current];
         const pct = Math.round((current / questions.length) * 100);
         document.getElementById('progress-fill').style.width = pct + '%';
@@ -435,6 +482,14 @@ setTimeout(cargarRacha, 800);
         document.getElementById('q-text').textContent = q.pregunta;
         document.getElementById('feedback').innerHTML = '';
         document.getElementById('next-ctrl').style.display = 'none';
+
+        // Badge de dificultad
+        const badges = { facil: '🟢 Fácil', medio: '🟡 Medio', dificil: '🔴 Difícil' };
+        const coloresBadge = { facil: 'background:#ecfdf5;color:#059669;', medio: 'background:#eef2ff;color:#4f46e5;', dificil: 'background:#fef2f2;color:#dc2626;' };
+        const badge = document.getElementById('dificultad-badge');
+        badge.textContent = badges[dificultadSeleccionada] || '🟡 Medio';
+        badge.style.cssText = `font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;${coloresBadge[dificultadSeleccionada] || coloresBadge.medio}`;
+
         const opts = document.getElementById('opts');
         opts.innerHTML = '';
         q.opciones.forEach((op, i) => {
@@ -444,9 +499,83 @@ setTimeout(cargarRacha, 800);
             b.onclick = () => checkAnswer(i, b);
             opts.appendChild(b);
         });
+
+        // Mostrar temporizador solo en reintento y si tiene tiempo configurado
+        if (esReintento && tiempoSegundos > 0) {
+            document.getElementById('timer-wrap').style.display = 'block';
+            document.getElementById('timer-label-seg').textContent = tiempoSegundos;
+            iniciarTimer(tiempoSegundos);
+        } else {
+            document.getElementById('timer-wrap').style.display = 'none';
+        }
+    }
+
+    function iniciarTimer(segundos) {
+        timerRestante = segundos;
+        actualizarTimerUI(segundos, segundos);
+        timerInterval = setInterval(() => {
+            timerRestante--;
+            actualizarTimerUI(timerRestante, segundos);
+            if (timerRestante <= 0) {
+                detenerTimer();
+                tiempoAgotado();
+            }
+        }, 1000);
+    }
+
+    function actualizarTimerUI(restante, total) {
+        const num = document.getElementById('timer-num');
+        const fill = document.getElementById('timer-fill');
+        const circle = document.getElementById('timer-svg-circle');
+        const label = document.getElementById('timer-label');
+        const pct = (restante / total) * 100;
+        const circumference = 150.8;
+        const offset = circumference - (pct / 100) * circumference;
+
+        num.textContent = restante;
+        fill.style.width = pct + '%';
+        circle.style.strokeDashoffset = offset;
+
+        if (pct <= 25) {
+            fill.classList.add('warning');
+            num.style.color = '#ef4444';
+            circle.style.stroke = '#ef4444';
+        } else if (pct <= 50) {
+            fill.classList.add('warning');
+            num.style.color = '#f97316';
+            circle.style.stroke = '#f97316';
+        } else {
+            fill.classList.remove('warning');
+            num.style.color = '#4f46e5';
+            circle.style.stroke = '#4f46e5';
+        }
+
+        if (restante <= 10) label.textContent = '⚠️ ¡Apúrate!';
+        else if (restante <= 30) label.textContent = 'Tiempo restante';
+        else label.textContent = 'Tiempo restante';
+    }
+
+    function detenerTimer() {
+        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    }
+
+    function tiempoAgotado() {
+        document.querySelectorAll('.option').forEach(b => b.disabled = true);
+        const q = questions[current];
+        document.querySelectorAll('.option')[q.correcta].classList.add('correct');
+        failedQ = q;
+        document.getElementById('feedback').innerHTML = `<div class="feedback wrong">⏰ ¡Tiempo agotado! La respuesta era: <strong>${q.opciones[q.correcta]}</strong></div>`;
+        setTimeout(() => {
+            show('s-learn');
+            document.getElementById('learn-context').textContent = `Tema: ${q.tema}`;
+            document.getElementById('learn-content').innerHTML = '';
+            document.getElementById('retry-btn').style.display = 'none';
+            document.querySelectorAll('.checkbox-group input').forEach(c => c.checked = false);
+        }, 1800);
     }
 
     function checkAnswer(idx, btn) {
+        detenerTimer();
         const q = questions[current];
         document.querySelectorAll('.option').forEach(b => b.disabled = true);
         if (idx === q.correcta) {
@@ -479,12 +608,7 @@ setTimeout(cargarRacha, 800);
             const res = await fetch('/api/quiz/learn', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                body: JSON.stringify({
-                    tema: failedQ.tema,
-                    pregunta: failedQ.pregunta,
-                    respuestaCorrecta: failedQ.opciones[failedQ.correcta],
-                    opciones
-                })
+                body: JSON.stringify({ tema: failedQ.tema, pregunta: failedQ.pregunta, respuestaCorrecta: failedQ.opciones[failedQ.correcta], opciones })
             });
             const data = await res.json();
             const container = document.getElementById('learn-content');
@@ -495,20 +619,23 @@ setTimeout(cargarRacha, 800);
                 container.innerHTML += `<div class="learn-block"><div class="learn-block-title">▶️ Video de YouTube</div><a class="yt-link" href="https://www.youtube.com/results?search_query=${query}" target="_blank"><div class="play"><svg width="12" height="12" viewBox="0 0 12 12" fill="white"><polygon points="3,2 10,6 3,10"/></svg></div><div><div style="font-size:13px;font-weight:600">${failedQ.tema} — explicación en español</div><div style="font-size:12px;color:#6b7280;margin-top:2px">Ver en YouTube →</div></div></a></div>`;
             }
             if (data.ejercicio) container.innerHTML += `<div class="learn-block"><div class="learn-block-title">💻 Ejercicio práctico</div><pre style="font-size:13px;white-space:pre-wrap;line-height:1.7;font-family:'Inter',sans-serif">${data.ejercicio}</pre></div>`;
-        } catch(e) {
-            document.getElementById('learn-content').innerHTML = '<p style="color:#ef4444">Error al cargar el contenido.</p>';
-        }
+        } catch(e) { document.getElementById('learn-content').innerHTML = '<p style="color:#ef4444">Error al cargar el contenido.</p>'; }
         document.getElementById('learn-load').style.display = 'none';
         document.getElementById('retry-btn').style.display = 'block';
     }
 
-    function retryQuestion() { show('s-quiz'); showQuestion(); }
+    function retryQuestion() {
+        esReintento = true; // Activar temporizador en reintento
+        show('s-quiz');
+        showQuestion();
+    }
 
     function nextQuestion() {
         current++;
         if (current < questions.length) {
             showQuestion();
         } else {
+            detenerTimer();
             show('s-results');
             const pct = Math.round((score / questions.length) * 100);
             document.getElementById('r-correctas').textContent = score;
@@ -539,43 +666,34 @@ setTimeout(cargarRacha, 800);
         const formData = new FormData();
         formData.append('archivo', file);
         try {
-            const res = await fetch('/api/pdf/extraer', {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + token },
-                body: formData
-            });
+            const res = await fetch('/api/pdf/extraer', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: formData });
             const data = await res.json();
             if (data.texto) {
                 document.getElementById('study-text').value = data.texto;
                 document.getElementById('pdf-nombre').textContent = '✓ ' + file.name + ' cargado correctamente';
                 document.getElementById('pdf-nombre').style.display = 'block';
-            } else {
-                alert('No se pudo extraer texto del PDF.');
-            }
+            } else { alert('No se pudo extraer texto del PDF.'); }
         } catch(e) { alert('Error al subir el PDF.'); }
         document.getElementById('pdf-load').style.display = 'none';
         input.value = '';
     }
 
     function restart() {
-        questions = []; current = 0; score = 0; failedQ = null;
+        detenerTimer();
+        questions = []; current = 0; score = 0; failedQ = null; esReintento = false;
         document.getElementById('study-text').value = '';
         show('s-input');
     }
 
     // CHAT
-    let chatHistorial = [];
-    let chatAbierto = false;
-
+    let chatHistorial = [], chatAbierto = false;
     function toggleChat() {
         chatAbierto = !chatAbierto;
         const box = document.getElementById('chat-box');
-        const btn = document.getElementById('chat-btn');
         box.style.display = chatAbierto ? 'flex' : 'none';
-        btn.textContent = chatAbierto ? '×' : '💬';
+        document.getElementById('chat-btn').textContent = chatAbierto ? '×' : '💬';
         if (chatAbierto) document.getElementById('chat-input').focus();
     }
-
     async function sendChat() {
         const input = document.getElementById('chat-input');
         const mensaje = input.value.trim();
@@ -586,32 +704,21 @@ setTimeout(cargarRacha, 800);
         const typingId = 'typing-' + Date.now();
         addTyping(typingId);
         try {
-            const res = await fetch('/api/chat/mensaje', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                body: JSON.stringify({ mensaje, historial: chatHistorial.slice(-10) })
-            });
+            const res = await fetch('/api/chat/mensaje', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ mensaje, historial: chatHistorial.slice(-10) }) });
             const data = await res.json();
             removeTyping(typingId);
             addMsg(data.respuesta, 'bot');
             chatHistorial.push({ role: 'assistant', content: data.respuesta });
-        } catch(e) {
-            removeTyping(typingId);
-            addMsg('❌ Error al conectar. Intenta de nuevo.', 'bot');
-        }
+        } catch(e) { removeTyping(typingId); addMsg('❌ Error al conectar. Intenta de nuevo.', 'bot'); }
     }
-
     function addMsg(texto, rol) {
         const msgs = document.getElementById('chat-msgs');
         const div = document.createElement('div');
-        div.style.cssText = rol === 'user'
-            ? 'background:#4f46e5;border-radius:12px 12px 4px 12px;padding:10px 14px;max-width:85%;font-size:13px;color:white;line-height:1.5;align-self:flex-end;margin-left:auto;'
-            : 'background:#1e1b4b;border-radius:12px 12px 12px 4px;padding:10px 14px;max-width:85%;font-size:13px;color:#e2e8f0;line-height:1.5;';
+        div.style.cssText = rol === 'user' ? 'background:#4f46e5;border-radius:12px 12px 4px 12px;padding:10px 14px;max-width:85%;font-size:13px;color:white;line-height:1.5;align-self:flex-end;margin-left:auto;' : 'background:#1e1b4b;border-radius:12px 12px 12px 4px;padding:10px 14px;max-width:85%;font-size:13px;color:#e2e8f0;line-height:1.5;';
         div.textContent = texto;
         msgs.appendChild(div);
         msgs.scrollTop = msgs.scrollHeight;
     }
-
     function addTyping(id) {
         const msgs = document.getElementById('chat-msgs');
         const div = document.createElement('div');
@@ -621,11 +728,7 @@ setTimeout(cargarRacha, 800);
         msgs.appendChild(div);
         msgs.scrollTop = msgs.scrollHeight;
     }
-
-    function removeTyping(id) {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-    }
+    function removeTyping(id) { const el = document.getElementById(id); if (el) el.remove(); }
 </script>
 </body>
 </html>
