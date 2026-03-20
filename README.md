@@ -173,6 +173,8 @@ Instituto Tecnológico Metropolitano — Medellín, Colombia 🇨🇴
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-vilmar--rivas-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/vilmar-rivas-344834320/)
 [![GitHub](https://img.shields.io/badge/GitHub-vilmarrivasperea-black?style=flat&logo=github)](https://github.com/vilmarrivasperea)
+[![Portfolio](https://img.shields.io/badge/Portfolio-vilmarrivasperea.github.io-7c3aed?style=flat&logo=globe)](https://vilmarrivasperea.github.io)
+[![Email](https://img.shields.io/badge/Email-rivaspereavilmar@gmail.com-red?style=flat&logo=gmail)](mailto:rivaspereavilmar@gmail.com)
 
 ---
 
@@ -334,6 +336,8 @@ Instituto Tecnológico Metropolitano — Medellín, Colombia 🇨🇴
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-vilmar--rivas-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/vilmar-rivas-344834320/)
 [![GitHub](https://img.shields.io/badge/GitHub-vilmarrivasperea-black?style=flat&logo=github)](https://github.com/vilmarrivasperea)
+[![Portafolio](https://img.shields.io/badge/Portafolio-vilmarrivasperea.github.io-7c3aed?style=flat&logo=globe)](https://vilmarrivasperea.github.io)
+[![Email](https://img.shields.io/badge/Email-rivaspereavilmar@gmail.com-red?style=flat&logo=gmail)](mailto:rivaspereavilmar@gmail.com)
 
 ---
 

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vilmar Rivasperea — Desarrollador de Software</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #12121a;
+  --card: #16161f;
+  --border: #252535;
+  --accent: #6366f1;
+  --accent2: #a855f7;
+  --cyan: #22d3ee;
+  --green: #22c55e;
+  --text: #f1f0ff;
+  --muted: #6b6b8a;
+  --orange: #f97316;
+}
+body.light {
+  --bg: #f8f8ff;
+  --bg2: #f0f0f8;
+  --card: #ffffff;
+  --border: #e2e2f0;
+  --accent: #4f46e5;
+  --accent2: #9333ea;
+  --cyan: #0891b2;
+  --green: #16a34a;
+  --text: #0f0f1a;
+  --muted: #6b6b8a;
+  --orange: #ea580c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+
+/* NAV */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 16px 64px; background: rgba(10,10,15,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: background 0.3s; }
+body.light nav { background: rgba(248,248,255,0.85); }
+.logo { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: var(--accent); letter-spacing: 1px; }
+.logo span { color: var(--cyan); }
+.nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+.nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.theme-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: border-color 0.2s; }
+.theme-btn:hover { border-color: var(--accent); }
+
+/* HERO */
+#hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 64px 80px; position: relative; overflow: hidden; }
+.grid-bg { position: absolute; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 48px 48px; opacity: 0.4; }
+.blob1 { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%); top: -100px; right: -100px; }
+.blob2 { position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%); bottom: 0; left: 50px; }
+.hero-content { position: relative; max-width: 820px; }
+.hero-tag { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; animation: fadeUp 0.7s ease forwards 0.1s; opacity: 0; }
+.hero-tag::before { content: ''; width: 32px; height: 1px; background: var(--cyan); }
+.hero-name { font-size: clamp(52px, 8vw, 88px); font-weight: 800; line-height: 0.95; letter-spacing: -3px; margin-bottom: 24px; animation: fadeUp 0.7s ease forwards 0.3s; opacity: 0; }
+.hero-name .grad { background: linear-gradient(135deg, var(--text) 0%, var(--accent) 60%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-desc { font-size: 18px; color: var(--muted); max-width: 500px; line-height: 1.7; margin-bottom: 40px; animation: fadeUp 0.7s ease forwards 0.5s; opacity: 0; }
+.hero-desc strong { color: var(--text); }
+.hero-btns { display: flex; gap: 14px; flex-wrap: wrap; animation: fadeUp 0.7s ease forwards 0.7s; opacity: 0; }
+.btn-primary { padding: 13px 28px; background: var(--accent); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif; }
+.btn-primary:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,0.35); }
+.btn-outline { padding: 13px 28px; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif; }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+/* STATUS */
+.status-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 20px; font-size: 12px; color: var(--green); font-weight: 600; margin-bottom: 28px; animation: fadeUp 0.7s ease forwards 0.2s; opacity: 0; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse2 2s infinite; }
+@keyframes pulse2 { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+/* SECTIONS */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 90px 64px; }
+.sec-header { display: flex; align-items: center; gap: 16px; margin-bottom: 56px; }
+.sec-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan); letter-spacing: 2px; }
+.sec-title { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ABOUT */
+.about-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: start; }
+.about-text p { color: var(--muted); line-height: 1.8; margin-bottom: 18px; font-size: 15px; }
+.about-text p strong { color: var(--text); }
+.about-cards { display: flex; flex-direction: column; gap: 12px; }
+.acard { padding: 16px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; transition: border-color 0.2s, transform 0.2s; }
+.acard:hover { border-color: var(--accent); transform: translateX(4px); }
+.acard-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+.acard-val { font-size: 14px; font-weight: 600; color: var(--text); }
+
+/* SKILLS */
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.skill-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 26px; transition: all 0.3s; position: relative; overflow: hidden; }
+.skill-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--cyan)); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+.skill-card:hover::after { transform: scaleX(1); }
+.skill-card:hover { border-color: rgba(99,102,241,0.4); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
+.skill-icon { font-size: 28px; margin-bottom: 14px; }
+.skill-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.skill-desc { color: var(--muted); font-size: 12px; line-height: 1.6; margin-bottom: 16px; }
+.bar-row { margin-bottom: 9px; }
+.bar-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.bar-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+.bar-pct { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); font-weight: 700; }
+.bar-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.bar-fill { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--cyan)); width: 0%; transition: width 1.4s cubic-bezier(0.4,0,0.2,1); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 3px 9px; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 4px; color: var(--accent); }
+
+/* PROJECTS */
+.proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.proj-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: all 0.3s; }
+.proj-card:hover { border-color: rgba(99,102,241,0.4); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+.proj-featured { grid-column: 1 / -1; }
+.proj-featured-inner { display: grid; grid-template-columns: 1fr auto; gap: 36px; align-items: center; }
+.proj-badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--cyan); letter-spacing: 2px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.proj-badge::before { content: ''; width: 24px; height: 1px; background: var(--cyan); }
+.proj-title { font-size: 22px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
+.proj-desc { color: var(--muted); font-size: 13px; line-height: 1.7; margin-bottom: 20px; }
+.proj-stack { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+.stack-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 10px; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.25); border-radius: 4px; color: var(--accent2); }
+.proj-links { display: flex; gap: 14px; }
+.proj-link { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; color: var(--accent); display: flex; align-items: center; gap: 5px; transition: gap 0.2s, color 0.2s; font-family: 'Plus Jakarta Sans', sans-serif; }
+.proj-link:hover { gap: 9px; color: var(--cyan); }
+.proj-emoji { font-size: 64px; width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.12)); border: 1px solid var(--border); border-radius: 20px; flex-shrink: 0; }
+.proj-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 200px; border: 1px dashed var(--border); border-radius: 16px; }
+
+/* CONTACT */
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+.contact-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
+.contact-desc { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 28px; }
+.social-list { display: flex; flex-direction: column; gap: 10px; }
+.social-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: var(--text); font-size: 13px; font-weight: 600; transition: all 0.2s; }
+.social-item:hover { border-color: var(--accent); color: var(--accent); transform: translateX(4px); }
+.social-ico { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.cform { display: flex; flex-direction: column; gap: 14px; }
+.flabel { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 6px; }
+.finput, .ftextarea { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; transition: border-color 0.2s; outline: none; }
+.finput:focus, .ftextarea:focus { border-color: var(--accent); }
+.ftextarea { resize: vertical; min-height: 110px; }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--border); padding: 32px 64px; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+.fa { color: var(--accent); }
+
+/* ANIMATIONS */
+.fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+@keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+
+@media (max-width: 768px) {
+  nav { padding: 14px 20px; }
+  #hero { padding: 100px 20px 60px; }
+  .wrap { padding: 60px 20px; }
+  .about-grid, .contact-grid { grid-template-columns: 1fr; }
+  .proj-featured-inner { grid-template-columns: 1fr; }
+  .proj-emoji { display: none; }
+  footer { flex-direction: column; gap: 8px; text-align: center; padding: 24px 20px; }
+  .nav-links li:not(:last-child) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">VR<span>.</span>DEV</div>
+  <ul class="nav-links">
+    <li><a href="#sobre-mi">Sobre mí</a></li>
+    <li><a href="#habilidades">Skills</a></li>
+    <li><a href="#proyectos">Proyectos</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+    <li><button class="theme-btn" id="themeBtn">🌙</button></li>
+  </ul>
+</nav>
+
+<div id="hero">
+  <div class="grid-bg"></div>
+  <div class="blob1"></div>
+  <div class="blob2"></div>
+  <div class="hero-content">
+    <div class="status-badge"><span class="status-dot"></span>Disponible para proyectos</div>
+    <div class="hero-tag">Desarrollador de Software Full Stack</div>
+    <h1 class="hero-name">
+      <span class="grad">Vilmar</span><br>
+      <span class="grad">Rivasperea</span>
+    </h1>
+    <p class="hero-desc">
+      Estudiante de <strong>Tecnología en Análisis y Desarrollo de Software</strong> en el ITM, Medellín. Construyo aplicaciones web robustas con Java, Spring Boot, C# e Inteligencia Artificial.
+    </p>
+    <div class="hero-btns">
+      <a href="#proyectos" class="btn-primary">Ver proyectos →</a>
+      <a href="#contacto" class="btn-outline">Contactar</a>
+    </div>
+  </div>
+</div>
+
+<!-- SOBRE MÍ -->
+<div id="sobre-mi" class="wrap">
+  <div class="sec-header fade-in">
+    <span class="sec-num">01</span>
+    <h2 class="sec-title">Sobre mí</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text fade-in">
+      <p>Soy <strong>Vilmar Rivasperea</strong>, estudiante de Desarrollo de Software en el Instituto Tecnológico Metropolitano de Medellín, Colombia.</p>
+      <p>Tengo experiencia construyendo aplicaciones <strong>backend con Java y Spring Boot</strong>, desarrollo de escritorio con <strong>C# y .NET</strong>, e integración de APIs de inteligencia artificial usando Groq y LLaMA 3.</p>
+      <p>Me apasiona resolver problemas reales con tecnología. Aprendo constantemente y disfruto crear proyectos que combinen backend robusto, buenas prácticas y experiencias de usuario modernas.</p>
+      <div style="margin-top:28px">
+        <a href="mailto:rivaspereavilmar@gmail.com" class="btn-primary">Descargar CV →</a>
+      </div>
+    </div>
+    <div class="about-cards fade-in">
+      <div class="acard"><div class="acard-label">Ubicación</div><div class="acard-val">Medellín, Colombia 🇨🇴</div></div>
+      <div class="acard"><div class="acard-label">Institución</div><div class="acard-val">Instituto Tecnológico Metropolitano</div></div>
+      <div class="acard"><div class="acard-label">Programa</div><div class="acard-val">Tecnología en Análisis y Desarrollo de Software</div></div>
+      <div class="acard"><div class="acard-label">Enfoque</div><div class="acard-val">Backend · IA · APIs REST · Cloud</div></div>
+      <div class="acard"><div class="acard-label">Estado</div><div class="acard-val" style="color:var(--green)">● Disponible para proyectos</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- HABILIDADES -->
+<div id="habilidades" class="wrap">
+  <div class="sec-header fade-in">
+    <span class="sec-num">02</span>
+    <h2 class="sec-title">Habilidades</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card fade-in">
+      <div class="skill-icon">☕</div>
+      <div class="skill-name">Java & Spring Boot</div>
+      <div class="skill-desc">APIs REST robustas con autenticación JWT, JPA y despliegue en la nube.</div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">Java 17</span><span class="bar-pct">85%</span></div><div class="bar-track"><div class="bar-fill" data-w="85"></div></div></div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">Spring Boot / Security</span><span class="bar-pct">80%</span></div><div class="bar-track"><div class="bar-fill" data-w="80"></div></div></div>
+      <div class="tags"><span class="tag">Java 17</span><span class="tag">Spring Boot</span><span class="tag">JWT</span><span class="tag">Maven</span><span class="tag">JPA</span></div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">🔷</div>
+      <div class="skill-name">C# & .NET</div>
+      <div class="skill-desc">Aplicaciones de escritorio y prácticas universitarias con C# y SQL Server.</div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">C# / .NET</span><span class="bar-pct">75%</span></div><div class="bar-track"><div class="bar-fill" data-w="75"></div></div></div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">SQL Server</span><span class="bar-pct">70%</span></div><div class="bar-track"><div class="bar-fill" data-w="70"></div></div></div>
+      <div class="tags"><span class="tag">C#</span><span class="tag">.NET</span><span class="tag">SQL Server</span><span class="tag">SSMS</span><span class="tag">LINQ</span></div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">🗄️</div>
+      <div class="skill-name">Bases de datos</div>
+      <div class="skill-desc">Diseño y gestión de bases de datos relacionales con PostgreSQL y SQL Server.</div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">PostgreSQL</span><span class="bar-pct">80%</span></div><div class="bar-track"><div class="bar-fill" data-w="80"></div></div></div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">SQL Server</span><span class="bar-pct">70%</span></div><div class="bar-track"><div class="bar-fill" data-w="70"></div></div></div>
+      <div class="tags"><span class="tag">PostgreSQL</span><span class="tag">SQL Server</span><span class="tag">Hibernate</span><span class="tag">pgAdmin</span></div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">🌐</div>
+      <div class="skill-name">Frontend</div>
+      <div class="skill-desc">Interfaces web modernas, responsivas y animadas con HTML, CSS y JavaScript.</div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">HTML / CSS</span><span class="bar-pct">80%</span></div><div class="bar-track"><div class="bar-fill" data-w="80"></div></div></div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">JavaScript</span><span class="bar-pct">70%</span></div><div class="bar-track"><div class="bar-fill" data-w="70"></div></div></div>
+      <div class="tags"><span class="tag">HTML5</span><span class="tag">CSS3</span><span class="tag">JavaScript</span><span class="tag">Chart.js</span></div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">🤖</div>
+      <div class="skill-name">Inteligencia Artificial</div>
+      <div class="skill-desc">Integración de LLMs y APIs de IA en aplicaciones web reales.</div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">Groq API / LLaMA 3</span><span class="bar-pct">75%</span></div><div class="bar-track"><div class="bar-fill" data-w="75"></div></div></div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">Prompt Engineering</span><span class="bar-pct">70%</span></div><div class="bar-track"><div class="bar-fill" data-w="70"></div></div></div>
+      <div class="tags"><span class="tag">Groq API</span><span class="tag">LLaMA 3</span><span class="tag">Prompt Eng.</span></div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">🐍</div>
+      <div class="skill-name">Python & DevOps</div>
+      <div class="skill-desc">Scripts de automatización con Python y despliegue en la nube con Railway y Git.</div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">Python</span><span class="bar-pct">55%</span></div><div class="bar-track"><div class="bar-fill" data-w="55"></div></div></div>
+      <div class="bar-row"><div class="bar-top"><span class="bar-label">Git / Railway</span><span class="bar-pct">80%</span></div><div class="bar-track"><div class="bar-fill" data-w="80"></div></div></div>
+      <div class="tags"><span class="tag">Python</span><span class="tag">Git</span><span class="tag">GitHub</span><span class="tag">Railway</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROYECTOS -->
+<div id="proyectos" class="wrap">
+  <div class="sec-header fade-in">
+    <span class="sec-num">03</span>
+    <h2 class="sec-title">Proyectos</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="proj-grid">
+    <div class="proj-card proj-featured fade-in">
+      <div class="proj-featured-inner">
+        <div>
+          <div class="proj-badge">PROYECTO DESTACADO — 01</div>
+          <div class="proj-title">Quiz Tutor IA 🎓</div>
+          <div class="proj-desc">App educativa fullstack que genera quizzes inteligentes con IA. Incluye 3 niveles de dificultad con opción trampa, temporizador configurable, chat con IA (QuizBot), sistema de logros, racha diaria con avatares animados, gráfica de evolución y subida de PDFs. Desplegado en Railway con PostgreSQL.</div>
+          <div class="proj-stack">
+            <span class="stack-tag">Java 17</span><span class="stack-tag">Spring Boot</span><span class="stack-tag">PostgreSQL</span><span class="stack-tag">Groq API</span><span class="stack-tag">JWT</span><span class="stack-tag">Railway</span><span class="stack-tag">PDFBox</span><span class="stack-tag">Chart.js</span>
+          </div>
+          <div class="proj-links">
+            <a href="https://quiz-tutor-ia-production.up.railway.app" target="_blank" class="proj-link">Demo en vivo →</a>
+            <a href="https://github.com/vilmarrivasperea/quiz-tutor-ia" target="_blank" class="proj-link">GitHub →</a>
+          </div>
+        </div>
+        <div class="proj-emoji">🎓</div>
+      </div>
+    </div>
+    <div class="proj-card fade-in">
+      <div class="proj-badge">PROYECTO — 02</div>
+      <div class="proj-title">Prácticas C# & SQL Server 🔷</div>
+      <div class="proj-desc">Aplicaciones de escritorio y ejercicios universitarios desarrollados con C# y .NET, usando SQL Server como base de datos. Incluye CRUD, consultas avanzadas, stored procedures y diseño de interfaces de escritorio.</div>
+      <div class="proj-stack"><span class="stack-tag">C#</span><span class="stack-tag">.NET</span><span class="stack-tag">SQL Server</span><span class="stack-tag">SSMS</span><span class="stack-tag">LINQ</span></div>
+      <div class="proj-links"><a href="https://github.com/vilmarrivasperea" target="_blank" class="proj-link">GitHub →</a></div>
+    </div>
+    <div class="proj-card fade-in">
+      <div class="proj-badge">PROYECTO — 03</div>
+      <div class="proj-title">Portafolio Personal 💼</div>
+      <div class="proj-desc">Sitio web personal oscuro y profesional con barras de progreso animadas, modo claro/oscuro, animaciones al scroll y diseño completamente responsive. Construido con HTML, CSS y JavaScript puro.</div>
+      <div class="proj-stack"><span class="stack-tag">HTML5</span><span class="stack-tag">CSS3</span><span class="stack-tag">JavaScript</span></div>
+      <div class="proj-links"><a href="https://vilmarrivasperea.github.io" target="_blank" class="proj-link">Ver web →</a></div>
+    </div>
+    <div class="proj-empty fade-in">
+      <div style="font-size:36px;margin-bottom:14px">🚀</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--text)">Próximo proyecto</div>
+      <div style="color:var(--muted);font-size:12px">En construcción...</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACTO -->
+<div id="contacto" class="wrap">
+  <div class="sec-header fade-in">
+    <span class="sec-num">04</span>
+    <h2 class="sec-title">Contacto</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="contact-grid">
+    <div class="fade-in">
+      <div class="contact-title">¿Tienes un proyecto en mente?</div>
+      <div class="contact-desc">Estoy disponible para proyectos freelance, prácticas profesionales o simplemente para conectar con otros desarrolladores. ¡Escríbeme!</div>
+      <div class="social-list">
+        <a href="https://www.linkedin.com/in/vilmar-rivas-344834320/" target="_blank" class="social-item">
+          <div class="social-ico" style="background:rgba(0,119,181,0.15)">💼</div>LinkedIn — vilmar-rivas-344834320
+        </a>
+        <a href="https://github.com/vilmarrivasperea" target="_blank" class="social-item">
+          <div class="social-ico" style="background:rgba(255,255,255,0.05)">🐙</div>GitHub — vilmarrivasperea
+        </a>
+        <a href="mailto:rivaspereavilmar@gmail.com" class="social-item">
+          <div class="social-ico" style="background:rgba(99,102,241,0.1)">✉️</div>rivaspereavilmar@gmail.com
+        </a>
+        <a href="https://vilmarrivasperea.github.io" target="_blank" class="social-item">
+          <div class="social-ico" style="background:rgba(34,211,238,0.1)">🌐</div>Portafolio — vilmarrivasperea.github.io
+        </a>
+        <a href="https://quiz-tutor-ia-production.up.railway.app" target="_blank" class="social-item">
+          <div class="social-ico" style="background:rgba(168,85,247,0.1)">🎓</div>Quiz Tutor IA — Demo en vivo
+        </a>
+      </div>
+    </div>
+    <div class="cform fade-in">
+      <div><label class="flabel">Nombre</label><input type="text" class="finput" placeholder="Tu nombre"></div>
+      <div><label class="flabel">Correo</label><input type="email" class="finput" placeholder="tu@correo.com"></div>
+      <div><label class="flabel">Mensaje</label><textarea class="ftextarea" placeholder="Cuéntame sobre tu proyecto o idea..."></textarea></div>
+      <button class="btn-primary" onclick="window.location.href='mailto:rivaspereavilmar@gmail.com'">Enviar mensaje →</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2026 <span class="fa">Vilmar Rivasperea</span> — Medellín, Colombia 🇨🇴</div>
+  <div>Hecho con <span class="fa">❤</span> y mucho café ☕</div>
+</footer>
+
+<script>
+const themeBtn = document.getElementById('themeBtn');
+let dark = true;
+themeBtn.addEventListener('click', () => {
+  dark = !dark;
+  document.body.classList.toggle('light', !dark);
+  themeBtn.textContent = dark ? '🌙' : '☀️';
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+const barObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.bar-fill').forEach(b => {
+        setTimeout(() => { b.style.width = b.getAttribute('data-w') + '%'; }, 200);
+      });
+      barObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.skill-card').forEach(c => barObserver.observe(c));
+
+const sections = document.querySelectorAll('[id]');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--accent)' : '';
+  });
+});
+</script>
+</body>
+</html>
