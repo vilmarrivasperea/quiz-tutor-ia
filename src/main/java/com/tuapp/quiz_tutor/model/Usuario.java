@@ -1,6 +1,7 @@
 package com.tuapp.quiz_tutor.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,6 +22,8 @@ public class Usuario {
     private String password;
 
     private LocalDateTime fechaRegistro;
+    private int rachaDias = 0;
+    private LocalDate ultimaActividad;
 
     @PrePersist
     public void prePersist() {
@@ -32,9 +35,13 @@ public class Usuario {
     public String getCorreo() { return correo; }
     public String getPassword() { return password; }
     public LocalDateTime getFechaRegistro() { return fechaRegistro; }
+    public int getRachaDias() { return rachaDias; }
+    public LocalDate getUltimaActividad() { return ultimaActividad; }
     public void setId(Long id) { this.id = id; }
     public void setUsername(String username) { this.username = username; }
     public void setCorreo(String correo) { this.correo = correo; }
     public void setPassword(String password) { this.password = password; }
     public void setFechaRegistro(LocalDateTime fechaRegistro) { this.fechaRegistro = fechaRegistro; }
+    public void setRachaDias(int rachaDias) { this.rachaDias = rachaDias; }
+    public void setUltimaActividad(LocalDate ultimaActividad) { this.ultimaActividad = ultimaActividad; }
 }

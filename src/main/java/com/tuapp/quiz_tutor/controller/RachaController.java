@@ -1,4 +1,4 @@
-/*package com.tuapp.quiz_tutor.controller;
+package com.tuapp.quiz_tutor.controller;
 
 import com.tuapp.quiz_tutor.service.JwtService;
 import com.tuapp.quiz_tutor.service.RachaService;
@@ -36,4 +36,4 @@ public class RachaController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
-}*/
+}

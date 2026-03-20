@@ -1,4 +1,4 @@
-/*package com.tuapp.quiz_tutor.service;
+package com.tuapp.quiz_tutor.service;
 
 import com.tuapp.quiz_tutor.model.Usuario;
 import com.tuapp.quiz_tutor.repository.UsuarioRepository;
@@ -24,23 +24,19 @@ public class RachaService {
         LocalDate hoy = LocalDate.now();
         LocalDate ultima = usuario.getUltimaActividad();
 
-        boolean subioNivel = false;
         int nivelAnterior = getNivel(usuario.getRachaDias());
 
         if (ultima == null || ultima.isBefore(hoy.minusDays(1))) {
-            // Racha rota o primera vez
             usuario.setRachaDias(1);
         } else if (ultima.isBefore(hoy)) {
-            // Día siguiente — aumenta racha
             usuario.setRachaDias(usuario.getRachaDias() + 1);
         }
-        // Si ultima == hoy, no hace nada (ya estudió hoy)
 
         usuario.setUltimaActividad(hoy);
         usuarioRepository.save(usuario);
 
         int nivelNuevo = getNivel(usuario.getRachaDias());
-        subioNivel = nivelNuevo > nivelAnterior;
+        boolean subioNivel = nivelNuevo > nivelAnterior;
 
         Map<String, Object> info = buildRachaInfo(usuario);
         info.put("subioNivel", subioNivel);
@@ -114,4 +110,4 @@ public class RachaService {
         if (dias >= 3)  return "🦊";
         return "🐱";
     }
-}*/
+}
